@@ -1,0 +1,112 @@
+package ${package}.service.impl;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.BeanUtils;
+import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
+import top.builbu.common.util.page.Pagination;
+import top.builbu.common.dto.PageDTO;
+import top.builbu.common.dto.BaseResultCode;
+import top.builbu.common.dto.ResultDO;
+import ${package}.dto.${className}DTO;
+import ${package}.entity.${className};
+import ${package}.service.${className}Service;
+import ${package}.repository.${className}Mapper;
+@Slf4j
+@Service
+public class ${className}ServiceImpl implements ${className}Service{
+ 
+    @Autowired
+	private ${className}Mapper ${tableName}Mapper;
+	
+	
+	@Override
+	public PageDTO<${className}DTO> selectByList(${className}DTO dto,Pagination page ){
+	    PageDTO<${className}DTO> pageDo = new PageDTO<${className}DTO>();
+	    List<${className}DTO> result = ${tableName}Mapper.selectByList(dto,page.getCurrentResult(),page.getPageSize());
+		if(null!=result&&result.size()>0){
+		    pageDo.setList(result);
+		   
+		}
+		 pageDo.setPageCurrent(page.getPageCurrent());
+		 pageDo.setPageSize(page.getPageSize());
+		 pageDo.setTotal(${tableName}Mapper.selectByCount(dto));
+		return pageDo;
+	}
+	
+    @Override
+	public ResultDO<${className}> selectById(<#if pkJavaType == 'java.sql.Timestamp'>Date<#elseif pkJavaType == 'java.lang.Long'>Long<#elseif pkJavaType == 'java.lang.String'>String<#elseif pkJavaType == 'java.math.BigInteger'>Long<#else>Integer</#if> id){
+	    ResultDO<${className}> resultDo = null;
+	    if(null!=id&&!"".equals(id)){
+	        ${className} result = ${tableName}Mapper.selectByPrimaryKey(id);
+	        if(null!=result){
+	            resultDo = new ResultDO<>(result);
+	        }else{
+	            resultDo = new ResultDO<>(BaseResultCode.COMMON_NO_DATA,Boolean.FALSE);
+	        }
+	    }else{
+	        resultDo = new ResultDO<>(BaseResultCode.COMMON_WRONG_PARAMS,Boolean.FALSE);
+	    }
+	    return resultDo;
+	}
+	
+    @Override
+    public ResultDO<?> save(${className}DTO dto){
+    	ResultDO<?> result = null;
+    	${className} record = new ${className}(); 
+    	BeanUtils.copyProperties(dto, record);
+    	Integer rowId = ${tableName}Mapper.insert(record);
+    	if(null != rowId && rowId > 0){
+    		result = new ResultDO<>(BaseResultCode.COMMON_MESSAGE_CHENGGONG,Boolean.TRUE);
+    		result.setTabid("${tableName}List");
+    	}else{
+    		result = new ResultDO<>(BaseResultCode.COMMON_MESSAGE_LOSE,Boolean.FALSE);
+    		result.setCloseCurrent(Boolean.FALSE);
+    	}
+    	return result;
+    }
+    
+    @Override
+    public ResultDO<?> update(${className}DTO dto){
+    	ResultDO<?> result = null;
+    	${className} record = new ${className}();
+    	BeanUtils.copyProperties(dto, record);
+    	Integer rowId = ${tableName}Mapper.updateByPrimaryKey(record);
+    	if(null != rowId && rowId > 0){
+    		result = new ResultDO<>(BaseResultCode.COMMON_MESSAGE_CHENGGONG,Boolean.TRUE);
+    		result.setTabid("${tableName}List");
+    	}else{
+    		result = new ResultDO<>(BaseResultCode.COMMON_MESSAGE_LOSE,Boolean.FALSE);
+    		result.setCloseCurrent(Boolean.FALSE);
+    	}
+    	return result;
+    }
+    
+    @Override
+    public ResultDO<?> deleteById(<#if pkJavaType == 'java.sql.Timestamp'>Date<#elseif pkJavaType == 'java.lang.Long'>Long<#elseif pkJavaType == 'java.lang.String'>String<#elseif pkJavaType == 'java.math.BigInteger'>Long<#else>Integer</#if> id){
+    	ResultDO<?> result = null;
+    	Integer rowId = ${tableName}Mapper.deleteByPrimaryKey(id);
+    	if(null != rowId && rowId > 0){
+    		result = new ResultDO<>(BaseResultCode.COMMON_MESSAGE_CHENGGONG,Boolean.TRUE);
+    	}else{
+    		result = new ResultDO<>(BaseResultCode.COMMON_MESSAGE_LOSE,Boolean.FALSE);
+    	}
+    	return result;
+    }
+    
+    @Override
+    public ResultDO<?> deleteByCheck(<#if pkJavaType == 'java.sql.Timestamp'>Date<#elseif pkJavaType == 'java.lang.Long'>Long<#elseif pkJavaType == 'java.lang.String'>String<#elseif pkJavaType == 'java.math.BigInteger'>Long<#else>Integer</#if>[] delids){
+    	ResultDO<?> result = null;
+    	Integer rowId = ${tableName}Mapper.deleteByAll(delids);
+    	if(null != rowId && rowId > 0){
+    		result = new ResultDO<>(BaseResultCode.COMMON_MESSAGE_CHENGGONG,Boolean.TRUE);
+    	}else{
+    		result = new ResultDO<>(BaseResultCode.COMMON_MESSAGE_LOSE,Boolean.FALSE);
+    		result.setCloseCurrent(Boolean.FALSE);
+    	}
+    	return result;
+    }
+}
+	

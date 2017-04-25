@@ -1,0 +1,5 @@
+  UserDTO login(@Param("loginName")String loginName,@Param("passWord")String passWord); 
+  
+  <select id="login" parameterType="java.lang.String" resultMap="BaseResultMapDTO">
+	 select * from user where login_name = #{loginName} and password = #{passWord}
+  </select>

@@ -1,0 +1,30 @@
+package ${package}.entity;  
+
+import java.util.Date;      
+  
+public class ${className} {  
+    <#list properties as pro> 
+	    /**
+	     *
+	     *${pro.remark?default("无注释")}
+	    **/
+        private <#if pro.proType == 'java.sql.Timestamp'>Date<#elseif pro.proType == 'java.lang.Long'>Long<#elseif pro.proType == 'java.lang.String'>String<#elseif pro.proType == 'java.math.BigInteger'>Long<#else>Integer</#if> ${pro.proName};  
+    </#list>  
+          
+          
+    <#list properties as pro>
+        
+        public <#if pro.proType == 'java.sql.Timestamp'>Date<#elseif pro.proType == 'java.lang.Long'>Long<#elseif pro.proType == 'java.lang.String'>String<#elseif pro.proType == 'java.math.BigInteger'>Long<#else>Integer</#if> get<@upperFC>${pro.proName}</@upperFC>(){  
+            return this.${pro.proName};  
+        }  
+       
+        public void set<@upperFC>${pro.proName}</@upperFC>(<#if pro.proType == 'java.sql.Timestamp'>Date<#elseif pro.proType == 'java.lang.Long'>Long<#elseif pro.proType == 'java.lang.String'>String<#elseif pro.proType == 'java.math.BigInteger'>Long<#else>Integer</#if> ${pro.proName}){            
+           
+            this.${pro.proName} = ${pro.proName};
+                    
+        }  
+          
+                 
+    </#list>  
+}  
+

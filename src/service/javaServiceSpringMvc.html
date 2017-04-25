@@ -1,0 +1,22 @@
+package ${package}.service;
+
+import ${package}.dto.${className}DTO;
+import ${package}.entity.${className};
+import top.builbu.common.dto.PageDTO;
+import top.builbu.common.dto.ResultDO;
+import top.builbu.common.util.page.Pagination;
+
+public interface ${className}Service{
+     
+     PageDTO<${className}DTO> selectByList(${className}DTO dto, Pagination page);
+     
+     ResultDO<${className}> selectById(<#if pkJavaType == 'java.sql.Timestamp'>Date<#elseif pkJavaType == 'java.lang.Long'>Long<#elseif pkJavaType == 'java.lang.String'>String<#elseif pkJavaType == 'java.math.BigInteger'>Long<#else>Integer</#if> id);
+     
+     ResultDO<?> save(${className}DTO dto);
+
+     ResultDO<?> update(${className}DTO dto);
+     
+     ResultDO<?> deleteById(<#if pkJavaType == 'java.sql.Timestamp'>Date<#elseif pkJavaType == 'java.lang.Long'>Long<#elseif pkJavaType == 'java.lang.String'>String<#elseif pkJavaType == 'java.math.BigInteger'>Long<#else>Integer</#if> id);
+     
+     ResultDO<?> deleteByCheck(<#if pkJavaType == 'java.sql.Timestamp'>Date<#elseif pkJavaType == 'java.lang.Long'>Long<#elseif pkJavaType == 'java.lang.String'>String<#elseif pkJavaType == 'java.math.BigInteger'>Long<#else>Integer</#if>[] delids);
+}

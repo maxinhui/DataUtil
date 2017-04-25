@@ -1,0 +1,83 @@
+<script type="text/javascript">
+function pic_upload_success(file, data) {
+    var json = $.parseJSON(data)
+    
+    $(this).bjuiajax('ajaxDone', json)
+    if (json.success) {
+        $('#custom_pic').val(json.module).trigger('validate')
+        $('#custom_span_pic').html('<img src="'+ json.module +'" width="100" />')
+    }
+}
+function do_OK(json, $form) {
+    console.log(json)
+    console.log($form)
+}
+
+function mycallback(json) {
+
+	$(this)
+    .bjuiajax('ajaxDone', json)       // 信息提示		                       
+   
+    if(json.closeCurrent){
+       $(this)
+           .navtab('reloadFlag', json.tabid)
+           .dialog('closeCurrent')	
+    }
+
+}
+</script>
+<div class="bjui-pageContent">
+<form action="${le}{request.contextPath}/${tableName}/update" id="j_custom_form" data-toggle="validate" data-alertmsg="false" data-callback="mycallback">
+    <input type="hidden" name="custom.id" value="edce142bc2ed4ec6b623aacaf602a4de">
+    <input type="hidden" name="${columnName}" value="${le}{module.${columnName}}">
+    <div class="bjui-row col-3">
+     
+        <br>
+   <#list properties as pro>
+     <#if columnName != pro.proName>
+       <#if pro.remarkType == 'upload'><!-- 上傳 -->
+        <br>
+	    <label class="row-label">${pro.remark}</label>
+	    <div class="row-input">
+	        <div id="j_custom_pic_up" data-toggle="upload" data-uploader="${le}{request.contextPath}/${tableName}/uploadIng" 
+	            data-file-size-limit="1024000000"
+	            data-file-type-exts="*.jpg;*.png;*.gif;*.mpg"
+	            data-multi="true"
+	            data-on-upload-success="pic_upload_success"
+	            data-icon="cloud-upload"></div>
+	        <input type="hidden" name="${pro.proName}" value="" id="custom_pic">
+	        <span id="custom_span_pic"><img src="${pro.proName}" width="100" /></span>
+	     </div>
+	     <br>
+       <#elseif pro.remarkType == 'kindeditor'>
+        <br>
+        <label class="row-label">${pro.remark}</label>
+        <div class="row-input">
+            <textarea name="${pro.proName}" id="${pro.proName}" class="j-content" style="width: 800px;" data-toggle="kindeditor" data-minheight="450">
+            ${le}{module.${pro.proName?default('')}}
+            </textarea>
+         </div>
+         <br>
+       <#elseif pro.remarkType == 'time'>
+         <label class="row-label">${pro.remark}</label>
+         <div class="row-input required">
+            <input type="text" name="${pro.proName}" id="${pro.proName}" value="<${lg}if module.${pro.proName}??>${le}{module.${pro.proName}?string('yyyy/MM/dd')}</${lg}if>" data-toggle="datepicker" data-rule="required" data-pattern="yyyy/MM/dd">
+           
+         </div>
+       <#else>
+         <label class="row-label" >${pro.remark}</label>
+         <div class="row-input required">
+            <input type="text" name="${pro.proName}" id="${pro.proName}" value="${le}{module.${pro.proName}<#if pro.proType == 'java.lang.String'>?default('')</#if>}" data-rule="required">
+         </div>
+       </#if>
+     </#if>
+   </#list>
+    </div>
+</form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="submit" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>

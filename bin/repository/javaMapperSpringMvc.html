@@ -1,0 +1,53 @@
+package ${package}.repository;
+
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+import ${package}.dto.${className}DTO;
+import ${package}.entity.${className};
+
+@Repository
+public interface ${className}Mapper {
+
+    /**
+     * 列表
+     * @param dto
+     * @return
+     */
+    List<${className}DTO> selectByList(@Param("dto")${className}DTO dto,@Param("offset")Integer offset,@Param("limit")Integer limit);
+    
+    /**
+     *主键查询
+     *
+     */
+    ${className} selectByPrimaryKey(<#if pkJavaType == 'java.sql.Timestamp'>Date<#elseif pkJavaType == 'java.lang.Long'>Long<#elseif pkJavaType == 'java.lang.String'>String<#elseif pkJavaType == 'java.math.BigInteger'>Long<#else>Integer</#if> ${proName}); 
+
+   
+    /**
+     *主键查询
+     *
+     */
+    int deleteByPrimaryKey(<#if pkJavaType == 'java.sql.Timestamp'>Date<#elseif pkJavaType == 'java.lang.Long'>Long<#elseif pkJavaType == 'java.lang.String'>String<#elseif pkJavaType == 'java.math.BigInteger'>Long<#else>Integer</#if> ${proName}); 
+
+      
+    /**
+     *插入
+     *
+     */
+    int insert(${className} record); 
+      
+    /**
+     * 修改
+     *
+     */  
+    int updateByPrimaryKey(${className} record);  
+    
+    /**
+     * 批量删除
+     *
+     */  
+    int deleteByAll(@Param("delids")<#if pkJavaType == 'java.sql.Timestamp'>Date<#elseif pkJavaType == 'java.lang.Long'>Long<#elseif pkJavaType == 'java.lang.String'>String<#elseif pkJavaType == 'java.math.BigInteger'>Long<#else>Integer</#if>[] delids);
+    
+    int selectByCount(@Param("dto")${className}DTO dto);
+
+}

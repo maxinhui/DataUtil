@@ -1,0 +1,65 @@
+package ${package}.dto;  
+
+import java.util.Date;      
+  
+public class ${className}DTO {  
+    <#list properties as pro> 
+	    /**
+	     *
+	     *${pro.remark?default("无注释")}
+	    **/
+        private <#if pro.proType == 'java.sql.Timestamp'>Date<#elseif pro.proType == 'java.lang.Long'>Long<#elseif pro.proType == 'java.lang.String'>String<#elseif pro.proType == 'java.math.BigInteger'>Long<#else>Integer</#if> ${pro.proName};  
+        <#if pro.remarkType == 'search' && pro.jdbcType == 'DATETIME'>
+        /**
+	     *
+	     *${pro.remark?default("无注释")}bgein
+	    **/
+        private String ${pro.proName}Begin;  
+        
+        /**
+	     *
+	     *${pro.remark?default("无注释")}end
+	    **/
+        private String ${pro.proName}End;
+        </#if>
+    </#list>  
+          
+          
+    <#list properties as pro>        
+        public <#if pro.proType == 'java.sql.Timestamp'>Date<#elseif pro.proType == 'java.lang.Long'>Long<#elseif pro.proType == 'java.lang.String'>String<#elseif pro.proType == 'java.math.BigInteger'>Long<#else>Integer</#if> get<@upperFC>${pro.proName}</@upperFC>(){  
+            return this.${pro.proName};  
+        }  
+       
+        public void set<@upperFC>${pro.proName}</@upperFC>(<#if pro.proType == 'java.sql.Timestamp'>Date<#elseif pro.proType == 'java.lang.Long'>Long<#elseif pro.proType == 'java.lang.String'>String<#elseif pro.proType == 'java.math.BigInteger'>Long<#else>Integer</#if> ${pro.proName}){  
+           <#if pro.proType == 'java.lang.String'>
+            this.${pro.proName} = ${pro.proName} == "" ? null : ${pro.proName}.trim();
+           <#else>
+            this.${pro.proName} = ${pro.proName};
+           </#if> 
+        } 
+         
+        <#if pro.remarkType == 'search' && pro.jdbcType == 'DATETIME'>
+        public String get<@upperFC>${pro.proName}Begin</@upperFC>(){  
+            return this.${pro.proName}Begin;  
+        }  
+       
+        public void set<@upperFC>${pro.proName}Begin</@upperFC>(String ${pro.proName}Begin){  
+
+            this.${pro.proName}Begin = ${pro.proName}Begin == "" ? null : ${pro.proName}Begin.trim();
+
+            
+        }
+        
+        public String get<@upperFC>${pro.proName}End</@upperFC>(){  
+            return this.${pro.proName}End;  
+        }  
+       
+        public void set<@upperFC>${pro.proName}End</@upperFC>(String ${pro.proName}End){  
+
+            this.${pro.proName}End = ${pro.proName}End == "" ? null : ${pro.proName}End.trim();
+         
+            
+        }  
+        </#if>                    
+    </#list>  
+}  

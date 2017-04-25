@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package}.repository.${className}Mapper">
+  <resultMap id="BaseResultMap" type="${package}.entity.${className}">
+  <#list properties as pro>
+     <#if pro.proName == columnName>
+     <id column="${pro.jdbcName}" jdbcType="<#if pro.jdbcType == 'INT'>INTEGER<#elseif pro.jdbcType == 'DATETIME'>TIMESTAMP<#elseif pro.jdbcType == 'BIGINT UNSIGNED'>BIGINT<#elseif pro.jdbcType == 'TINYINT'>INTEGER<#else>${pro.jdbcType}</#if>" property="${pro.proName}" />
+     <#else>
+     <result column="${pro.jdbcName}" jdbcType="<#if pro.jdbcType == 'INT'>INTEGER<#elseif pro.jdbcType == 'DATETIME'>TIMESTAMP<#elseif pro.jdbcType == 'BIGINT UNSIGNED'>BIGINT<#elseif pro.jdbcType == 'TINYINT'>INTEGER<#else>${pro.jdbcType}</#if>" property="${pro.proName}" />
+     </#if>
+  </#list>
+  </resultMap>
+  
+  
+  <resultMap id="BaseResultMapDTO" type="${package}.dto.${className}DTO">
+   <#list properties as pro>
+     <#if pro.proName == columnName>
+     <id column="${pro.jdbcName}" jdbcType="<#if pro.jdbcType == 'INT'>INTEGER<#elseif pro.jdbcType == 'DATETIME'>TIMESTAMP<#elseif pro.jdbcType == 'BIGINT UNSIGNED'>BIGINT<#elseif pro.jdbcType == 'TINYINT'>INTEGER<#else>${pro.jdbcType}</#if>" property="${pro.proName}" />
+     <#else>
+     <result column="${pro.jdbcName}" jdbcType="<#if pro.jdbcType == 'INT'>INTEGER<#elseif pro.jdbcType == 'DATETIME'>TIMESTAMP<#elseif pro.jdbcType == 'BIGINT UNSIGNED'>BIGINT<#elseif pro.jdbcType == 'TINYINT'>INTEGER<#else>${pro.jdbcType}</#if>" property="${pro.proName}" />
+     </#if>
+  </#list>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+  <#list baseColumn?split(";") as column>
+     ${column}
+  </#list>  
+  </sql>
+<!-- 列表  -->
+  <select id="selectByList"  resultMap="BaseResultMapDTO">
+     select 
+     <include refid="Base_Column_List" />
+     from ${name} where 1=1
+      <#list properties as pro>
+      <if test="dto.${pro.proName} != null">
+      and  ${pro.jdbcName} = ${lg}{dto.${pro.proName},jdbcType=<#if pro.jdbcType == 'INT'>INTEGER<#elseif pro.jdbcType == 'DATETIME'>TIMESTAMP<#elseif pro.jdbcType == 'BIGINT UNSIGNED'>BIGINT<#elseif pro.jdbcType == 'TINYINT'>INTEGER<#else>${pro.jdbcType}</#if>}
+      </if>
+      <#if pro.remarkType == 'search' && pro.jdbcType == 'DATETIME'>
+       <if test="dto.${pro.proName}Begin != null"><!-- 时间段搜索条件  -->
+           <![CDATA[
+			and ${pro.jdbcName} <= ${lg}{dto.${pro.proName}Begin}
+			
+			]]>
+			<if test="dto.${pro.proName}End == null">
+			  and ${pro.jdbcName} >= ${lg}{dto.${pro.proName}End}
+			</if>
+      </if>
+      
+      <if test="dto.${pro.proName}End != null">
+           <![CDATA[
+			and ${pro.jdbcName} >= ${lg}{dto.${pro.proName}End}
+			
+			]]>
+      </if>
+      </#if>
+      </#list> 
+     order by ${proName} desc limit ${lg}{offset},${lg}{limit}
+  </select>
+  
+<!-- 主键查询  -->
+
+  <select id="selectByPrimaryKey" parameterType="<#if pkJavaType == 'java.math.BigInteger'>java.lang.Long<#else>${pkJavaType}</#if>" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ${name}    
+    where ${proName} = ${lg}{${columnName},jdbcType=<#if pkJdbcType == 'INT'>INTEGER<#elseif pkJdbcType == 'DATETIME'>TIMESTAMP<#elseif pkJdbcType == 'BIGINT UNSIGNED'>BIGINT<#elseif pkJdbcType == 'TINYINT'>INTEGER<#else>${pkJdbcType}</#if>}
+  </select>
+  
+
+<!-- 主键删除 --> 
+  <delete id="deleteByPrimaryKey" parameterType="<#if pkJavaType == 'java.math.BigInteger'>java.lang.Long<#else>${pkJavaType}</#if>">
+    delete from ${name}
+    where ${proName} = ${lg}{${columnName},jdbcType=<#if pkJdbcType == 'INT'>INTEGER<#elseif pkJdbcType == 'DATETIME'>TIMESTAMP<#elseif pkJdbcType == 'BIGINT UNSIGNED'>BIGINT<#elseif pkJdbcType == 'TINYINT'>INTEGER<#else>${pkJdbcType}</#if>}
+  </delete>
+
+
+<!-- 插入  -->
+  <insert id="insert" parameterType="${package}.entity.${className}">
+    insert into ${name} (
+	    <#list baseColumn?split(";") as column>
+	    ${column}
+	    </#list>
+      )
+    values (
+        <#list baseValueColumn?split(";") as valueColumn>
+        ${valueColumn?replace('INT','INTEGER')?replace('DATETIME','TIMESTAMP')?replace('BIGINTEGER','BIGINT')?replace('BIGINT UNSIGNED','BIGINT')?replace('TINYINTEGER','INTEGER')}
+        </#list>
+      )
+  </insert>
+ 
+<!-- 修改 -->  
+  <update id="updateByPrimaryKey" parameterType="${package}.entity.${className}">
+    update ${name}
+    <set>
+    <#list properties as pro>
+    <#if pro_has_next>
+      <if test="${pro.proName} != null">
+        ${pro.jdbcName} = ${lg}{${pro.proName},jdbcType=<#if pro.jdbcType == 'INT'>INTEGER<#elseif pro.jdbcType == 'DATETIME'>TIMESTAMP<#elseif pro.jdbcType == 'BIGINT UNSIGNED'>BIGINT<#elseif pro.jdbcType == 'TINYINT'>INTEGER<#else>${pro.jdbcType}</#if>},
+      </if>
+    <#else>
+      <if test="${pro.proName} != null">
+        ${pro.jdbcName} = ${lg}{${pro.proName},jdbcType=<#if pro.jdbcType == 'INT'>INTEGER<#elseif pro.jdbcType == 'DATETIME'>TIMESTAMP<#elseif pro.jdbcType == 'BIGINT UNSIGNED'>BIGINT<#elseif pro.jdbcType == 'TINYINT'>INTEGER<#else>${pro.jdbcType}</#if>}
+      </if>
+    </#if>  
+    </#list> 
+    </set>
+  
+    where ${proName} = ${lg}{${columnName},jdbcType=<#if pkJdbcType == 'INT'>INTEGER<#elseif pkJdbcType == 'DATETIME'>TIMESTAMP<#elseif pkJdbcType == 'BIGINT UNSIGNED'>BIGINT<#elseif pkJdbcType == 'TINYINT'>INTEGER<#else>${pkJdbcType}</#if>}
+   
+  </update>
+<!--   批量删除       -->
+  <delete id="deleteByAll" parameterType="<#if pkJavaType == 'java.math.BigInteger'>java.lang.Long<#else>${pkJavaType}</#if>">
+      delete from ${name} where ${proName} in
+      <foreach item="id" collection="delids" open="(" separator="," close=")">
+          ${lg}{id}
+      </foreach>
+  </delete>  
+  
+  <select id="selectByCount" resultType="java.lang.Integer">
+		select count(1)
+		from ${name} where 1=1
+	      <#list properties as pro>
+	      <if test="dto.${pro.proName} != null">
+	      and  ${pro.jdbcName} = ${lg}{dto.${pro.proName},jdbcType=<#if pro.jdbcType == 'INT'>INTEGER<#elseif pro.jdbcType == 'DATETIME'>TIMESTAMP<#elseif pro.jdbcType == 'BIGINT UNSIGNED'>BIGINT<#elseif pro.jdbcType == 'TINYINT'>INTEGER<#else>${pro.jdbcType}</#if>}
+	      </if>
+	      <#if pro.remarkType == 'search' && pro.jdbcType == 'DATETIME'>
+	       <if test="dto.${pro.proName}Begin != null"><!-- 时间段搜索条件  -->
+	           <![CDATA[
+				and ${pro.jdbcName} <= ${lg}{dto.${pro.proName}Begin}
+				
+				]]>
+				<if test="dto.${pro.proName}End == null">
+				  and ${pro.jdbcName} >= ${lg}{dto.${pro.proName}End}
+				</if>
+	      </if>
+	      
+	      <if test="dto.${pro.proName}End != null">
+	           <![CDATA[
+				and ${pro.jdbcName} >= ${lg}{dto.${pro.proName}End}
+				
+				]]>
+	      </if>
+	      </#if>
+	      </#list> 
+	</select>
+</mapper>
