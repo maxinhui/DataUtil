@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import util.CaseUtil;
 import util.PackageBaseUtil;
 import util.PropertiesUtil;
@@ -26,8 +25,7 @@ import freemarker.template.TemplateException;
 public class DbMetaDataUtilTest {
 	
 	public static String baseBusinessUrl;//项目路径
-	public static String baseWebsiteUrl;//项目路径
-		
+	public static String baseWebsiteUrl;//项目路径		
 	public static String htmlUrl;//路径
 	public static String businessUrl;
 	public static String websiteUrl;

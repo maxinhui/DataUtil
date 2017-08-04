@@ -73,7 +73,7 @@
            <#list properties as pro>
               <#if columnName != pro.proName>
               <#if pro.jdbcType == 'DATETIME'>
-                <td>${le}{dto.${pro.proName}?time}</td>
+                <td>${le}{dto.${pro.proName}?string('yyyy/MM/dd')}</td>
               <#else>
                 <td>${le}{dto.${pro.proName}?default('')}</td>
               </#if>

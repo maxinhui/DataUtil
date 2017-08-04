@@ -134,11 +134,12 @@ public class ${className}Controller {
     <#if pro.remarkType == 'upload'>
     @ResponseBody
     @RequestMapping("/uploadIng")
-    public ResultDO<String> uploadIng(MultipartFile file){
+    public ResultDO<String> uploadIng(HttpServletRequest request,MultipartFile file){
     	ResultDO<String> result = null;
     	if(null != file){
-    	  String filePath = UploadUtil.upload(file, "D://", "image");
-    	  result = new ResultDO<>(BaseResultCode.COMMON_MESSAGE_CHENGGONG,Boolean.FALSE);
+    	 String realPath = request.getSession().getServletContext().getRealPath("/");
+    	  String filePath = UploadUtil.upload(file, realPath, "image/");
+    	  result = new ResultDO<>(BaseResultCode.COMMON_MESSAGE_CHENGGONG,Boolean.TRUE);
     	  result.setModule(filePath);
     	}else{
     	  result = new ResultDO<>(BaseResultCode.COMMON_FAIL,Boolean.FALSE);
